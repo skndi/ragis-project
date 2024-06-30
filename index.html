@@ -1,28 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
 
-<head>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin=""/>
-
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div id="map"></div>
-</body>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
 </html>
 
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
- integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
- crossorigin=""></script>
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
 
 <script>
-  var map = L.map('map').setView([42.69724456826025, 23.321705476508402], 13);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  var map = L.map("map").setView([42.69724456826025, 23.321705476508402], 13);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
 
-  var data = fetch("parks.geojson").then(function(data){L.geoJSON(data).addTo(map);})
+  const parkStyle = {
+    color: "#4ca832",
+    fillOpacity: 0.3,
+  };
+
+  const roadStyle = {
+    color: "#1e90d6",
+    fillOpacity: 0.3,
+  };
+
+  const entranceStyle = {
+    color: "#b821eb",
+    fillOpacity: 0.1,
+    radius: 3,
+  };
+
+  var parksResponse = fetch(
+    "https://skndi.github.io/ragis-project/parks.geojson"
+  )
+    .then(function (parksResponse) {
+      return parksResponse.json();
+    })
+    .then(function (parksData) {
+      L.geoJSON(parksData, { style: parkStyle }).addTo(map);
+    });
+
+  var roadsResponse = fetch(
+    "https://skndi.github.io/ragis-project/roads.geojson"
+  )
+    .then(function (roadsResponse) {
+      return roadsResponse.json();
+    })
+    .then(function (roadsData) {
+      L.geoJSON(roadsData, { style: roadStyle }).addTo(map);
+    });
+
+  var entranceResponse = fetch(
+    "https://skndi.github.io/ragis-project/entrances.geojson"
+  )
+    .then(function (entranceResponse) {
+      return entranceResponse.json();
+    })
+    .then(function (entranceData) {
+      L.geoJSON(entranceData, {
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, entranceStyle);
+        },
+      }).addTo(map);
+    });
 </script>
