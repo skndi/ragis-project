@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/accessible_parks_highlighter" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
